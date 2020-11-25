@@ -1,0 +1,528 @@
+# @model(
+#     queries: { get: null, list: null }
+#     mutations: { create: null, update: null, delete: null }
+#     subscriptions: null
+#   )
+
+#  @auth(
+#     rules: [
+#       {allow: owner, ownerField: "owner", operations: [create, update, delete, read]},
+#     ])
+
+# owner: ID is for admin created data records, so we can put the acutal ownerId otherwise it will defaut to the adminId and the actual owner will not be able to access it
+
+type User
+  @model(
+    queries: { get: "getUser", list: null }
+    mutations: { create: null, update: "updateUser", delete: null }
+    subscriptions: null
+  )
+  @auth(
+    rules: [
+      { allow: owner, operations: [create, update, delete] }
+      { allow: groups, groups: ["Admin"], operations: [create, update, delete] }
+    ]
+  ) {
+  id: ID!
+  email: String!
+  firstName: String
+  lastName: String
+  identityPoolId: String!
+  restaurants: [Restaurant]
+    @connection(keyName: "byUserRestaurant", fields: ["id"])
+  orders: [Order] @connection(keyName: "byUserOrder", fields: ["id"])
+  owner: ID
+}
+
+type Restaurant
+  @key(name: "byUserRestaurant", fields: ["restaurantManagerId"])
+  @model(
+    queries: { get: "getRestaurant", list: "listRestaurants" }
+    mutations: {
+      create: "createRestaurant"
+      update: "updateRestaurant"
+      delete: null
+    }
+    subscriptions: null
+  )
+  @auth(
+    rules: [
+      { allow: owner, operations: [create, update, delete, read] }
+      {
+        allow: groups
+        groups: ["Admin"]
+        operations: [create, update, delete, read]
+      }
+    ]
+  ) {
+  id: ID!
+  name: String!
+  description: String
+  image: S3Object
+  address: Address!
+  _geoloc: Location!
+  verified: Boolean!
+  isAcceptingOrders: Boolean!
+  operatingHours: OperatingHours!
+  restaurantManagerId: ID!
+  deviceEndpoint: String
+  registers: [Register]
+    @connection(keyName: "byRestaurantRegister", fields: ["id"])
+  advertisements: [Advertisement]
+    @connection(keyName: "byRestaurantAdvertisement", fields: ["id"])
+  categories: [Category]
+    @connection(keyName: "byRestaurantCategory", fields: ["id"])
+  products: [Product]
+    @connection(keyName: "byRestaurantProduct", fields: ["id"])
+  modifierGroups: [ModifierGroup]
+    @connection(keyName: "byRestaurantModifierGroup", fields: ["id"])
+  modifiers: [Modifier]
+    @connection(keyName: "byRestaurantModifier", fields: ["id"])
+  orders: [Order] @connection(keyName: "byRestaurantOrder", fields: ["id"])
+  ordersByStatusPlacedAt: [Order]
+    @connection(keyName: "byRestaurantByStatusByDate", fields: ["id"])
+  owner: ID
+}
+
+type Advertisement
+  @key(name: "byRestaurantAdvertisement", fields: ["advertisementRestaurantId"])
+  @model(queries: null, subscriptions: null)
+  @auth(
+    rules: [
+      { allow: owner, operations: [create, update, delete] }
+      { allow: groups, groups: ["Admin"], operations: [create, update, delete] }
+    ]
+  ) {
+  id: ID!
+  name: String!
+  active: Boolean
+  activeDaysOfWeek: [AdvertisementDay]
+  content: S3Object!
+  contentDurationInSeconds: Int
+  advertisementRestaurantId: ID!
+  owner: ID
+}
+
+type AdvertisementDay {
+  monday: [AdvertisementTime!]!
+  tuesday: [AdvertisementTime!]!
+  wednesday: [AdvertisementTime!]!
+  thursday: [AdvertisementTime!]!
+  friday: [AdvertisementTime!]!
+  saturday: [AdvertisementTime!]!
+  sunday: [AdvertisementTime!]!
+}
+
+type AdvertisementTime {
+  startTime: AWSTime
+  endTime: AWSTime
+}
+
+type Register
+  @key(name: "byRestaurantRegister", fields: ["registerRestaurantId"])
+  @model(queries: null, subscriptions: null)
+  @auth(
+    rules: [
+      { allow: owner, operations: [create, update, delete] }
+      { allow: groups, groups: ["Admin"], operations: [create, update, delete] }
+    ]
+  ) {
+  id: ID!
+  name: String!
+  active: Boolean!
+  orderNumberSuffix: String
+  enableTableFlags: Boolean
+  enablePayLater: Boolean
+  type: RegisterType!
+  ## Eftpos Related
+  eftposProvider: EftposProvider
+  eftposIpAddress: String # Only used for Verifone currently
+  eftposPortNumber: String # Only used for Verifone currently
+  ## Receipt Printer Related
+  printers: [RegisterPrinter]
+    @connection(keyName: "byRegisterRegisterPrinter", fields: ["id"])
+  registerRestaurantId: ID!
+  owner: ID
+}
+
+type RegisterPrinter
+  @key(name: "byRegisterRegisterPrinter", fields: ["registerPrinterRegisterId"])
+  @model(queries: null, subscriptions: null)
+  @auth(
+    rules: [
+      { allow: owner, operations: [create, update, delete] }
+      { allow: groups, groups: ["Admin"], operations: [create, update, delete] }
+    ]
+  ) {
+  id: ID!
+  name: String!
+  address: String!
+  ignoreProducts: [RegisterPrinterProductLink]
+    @connection(keyName: "byRegisterPrinterProduct", fields: ["id"])
+  registerPrinterRegisterId: ID!
+  owner: ID
+}
+
+type RegisterPrinterProductLink
+  @key(
+    name: "byRegisterPrinterProduct"
+    fields: ["registerPrinterProductLinkRegisterPrinterId"]
+  )
+  @key(
+    name: "byProductRegisterPrinter"
+    fields: ["registerPrinterProductLinkProductId"]
+  )
+  @model(queries: null, subscriptions: null)
+  @auth(
+    rules: [
+      { allow: owner, operations: [create, update, delete] }
+      { allow: groups, groups: ["Admin"], operations: [create, update, delete] }
+    ]
+  ) {
+  id: ID!
+  registerPrinterProductLinkRegisterPrinterId: ID!
+  registerPrinterProductLinkProductId: ID!
+  registerPrinter: RegisterPrinter!
+    @connection(fields: ["registerPrinterProductLinkRegisterPrinterId"])
+  product: Product! @connection(fields: ["registerPrinterProductLinkProductId"])
+  owner: ID
+}
+
+enum RegisterType {
+  KIOSK
+  POS
+}
+
+enum EftposProvider {
+  SMARTPAY
+  VERIFONE
+}
+
+type Category
+  @key(
+    name: "byRestaurantCategory"
+    fields: ["categoryRestaurantId", "displaySequence"]
+  )
+  @model(queries: null, subscriptions: null)
+  @auth(
+    rules: [
+      { allow: owner, operations: [create, update, delete] }
+      { allow: groups, groups: ["Admin"], operations: [create, update, delete] }
+    ]
+  ) {
+  id: ID!
+  name: String!
+  image: S3Object
+  displaySequence: Int!
+  products: [CategoryProductLink]
+    @connection(keyName: "byCategoryProduct", fields: ["id"])
+  categoryRestaurantId: ID!
+  owner: ID
+}
+
+type CategoryProductLink
+  @key(
+    name: "byCategoryProduct"
+    fields: ["categoryProductLinkCategoryId", "displaySequence"]
+  )
+  @key(name: "byProductCategory", fields: ["categoryProductLinkProductId"])
+  @model(queries: null, subscriptions: null)
+  @auth(
+    rules: [
+      { allow: owner, operations: [create, update, delete] }
+      { allow: groups, groups: ["Admin"], operations: [create, update, delete] }
+    ]
+  ) {
+  id: ID!
+  displaySequence: Int!
+  categoryProductLinkCategoryId: ID!
+  categoryProductLinkProductId: ID!
+  category: Category! @connection(fields: ["categoryProductLinkCategoryId"])
+  product: Product! @connection(fields: ["categoryProductLinkProductId"])
+  owner: ID
+}
+
+type Product
+  @key(name: "byRestaurantProduct", fields: ["productRestaurantId", "name"])
+  @model(queries: null, subscriptions: null)
+  @auth(
+    rules: [
+      { allow: owner, operations: [create, update, delete] }
+      { allow: groups, groups: ["Admin"], operations: [create, update, delete] }
+    ]
+  ) {
+  id: ID!
+  name: String!
+  description: String
+  image: S3Object
+  price: Int!
+  soldOutDate: String # Date without TZ
+  soldOut: Boolean
+  categories: [CategoryProductLink]
+    @connection(keyName: "byProductCategory", fields: ["id"])
+  modifierGroups: [ProductModifierGroupLink]
+    @connection(keyName: "byProductModifierGroup", fields: ["id"])
+  productRestaurantId: ID!
+  productIgnoredOnRegisterPrinters: [RegisterPrinterProductLink]
+    @connection(keyName: "byProductRegisterPrinter", fields: ["id"])
+  owner: ID
+}
+
+type ProductModifierGroupLink
+  @key(
+    name: "byProductModifierGroup"
+    fields: ["productModifierGroupLinkProductId", "displaySequence"]
+  )
+  @key(
+    name: "byModifierGroupProduct"
+    fields: ["productModifierGroupLinkModifierGroupId"]
+  )
+  @model(queries: null, subscriptions: null)
+  @auth(
+    rules: [
+      { allow: owner, operations: [create, update, delete] }
+      { allow: groups, groups: ["Admin"], operations: [create, update, delete] }
+    ]
+  ) {
+  id: ID!
+  displaySequence: Int!
+  hideForCustomer: Boolean
+  productModifierGroupLinkProductId: ID!
+  productModifierGroupLinkModifierGroupId: ID!
+  product: Product! @connection(fields: ["productModifierGroupLinkProductId"])
+  modifierGroup: ModifierGroup!
+    @connection(fields: ["productModifierGroupLinkModifierGroupId"])
+  owner: ID
+}
+
+type ModifierGroup
+  @key(
+    name: "byRestaurantModifierGroup"
+    fields: ["modifierGroupRestaurantId", "name"]
+  )
+  @model(queries: null, subscriptions: null)
+  @auth(
+    rules: [
+      { allow: owner, operations: [create, update, delete] }
+      { allow: groups, groups: ["Admin"], operations: [create, update, delete] }
+    ]
+  ) {
+  id: ID!
+  name: String!
+  choiceDuplicate: Int! # Num of identical modifiers users can select
+  choiceMin: Int!
+  choiceMax: Int!
+  products: [ProductModifierGroupLink]
+    @connection(keyName: "byModifierGroupProduct", fields: ["id"])
+  modifiers: [ModifierGroupModifierLink]
+    @connection(keyName: "byModifierGroupModifier", fields: ["id"])
+  modifierGroupRestaurantId: ID!
+  owner: ID
+}
+
+type ModifierGroupModifierLink
+  @key(
+    name: "byModifierGroupModifier"
+    fields: ["modifierGroupModifierLinkModifierGroupId", "displaySequence"]
+  )
+  @key(
+    name: "byModifierModifierGroup"
+    fields: ["modifierGroupModifierLinkModifierId"]
+  )
+  @model(queries: null, subscriptions: null)
+  @auth(
+    rules: [
+      { allow: owner, operations: [create, update, delete] }
+      { allow: groups, groups: ["Admin"], operations: [create, update, delete] }
+    ]
+  ) {
+  id: ID!
+  displaySequence: Int!
+  preSelectedQuantity: Int
+  modifierGroupModifierLinkModifierGroupId: ID!
+  modifierGroupModifierLinkModifierId: ID!
+  modifierGroup: ModifierGroup!
+    @connection(fields: ["modifierGroupModifierLinkModifierGroupId"])
+  modifier: Modifier!
+    @connection(fields: ["modifierGroupModifierLinkModifierId"])
+  owner: ID
+}
+
+type Modifier
+  @key(name: "byRestaurantModifier", fields: ["modifierRestaurantId", "name"])
+  @model(queries: null, subscriptions: null)
+  @auth(
+    rules: [
+      { allow: owner, operations: [create, update, delete] }
+      { allow: groups, groups: ["Admin"], operations: [create, update, delete] }
+    ]
+  ) {
+  id: ID!
+  name: String!
+  price: Int!
+  soldOutDate: String # Date without TZ
+  soldOut: Boolean
+  modifierGroups: [ModifierGroupModifierLink]
+    @connection(keyName: "byModifierModifierGroup", fields: ["id"])
+  modifierRestaurantId: ID!
+  owner: ID
+}
+
+type Order
+  @key(
+    name: "byRestaurantByStatusByDate"
+    fields: ["orderRestaurantId", "status", "placedAt"]
+  )
+  @key(name: "byUserOrder", fields: ["orderUserId"])
+  @key(name: "byRestaurantOrder", fields: ["orderRestaurantId"])
+  @model(queries: null, subscriptions: null)
+  @auth(
+    rules: [
+      { allow: owner, operations: [create, update, delete] }
+      { allow: groups, groups: ["Admin"], operations: [create, update, delete] }
+    ]
+  ) {
+  id: ID!
+  status: OrderStatus!
+  paid: Boolean
+  type: OrderType!
+  number: String!
+  table: String
+  notes: String
+  total: Int!
+  registerId: ID
+  products: [OrderProduct!]
+  placedAt: String
+  placedAtUtc: String
+  completedAt: String
+  completedAtUtc: String
+  cancelledAt: String
+  cancelledAtUtc: String
+  orderUserId: ID!
+  orderRestaurantId: ID!
+}
+
+type VerifoneTransactionLog
+  @model(queries: null, subscriptions: null)
+  @auth(
+    rules: [
+      { allow: owner, operations: [create] }
+      { allow: groups, groups: ["Admin"], operations: [create, update, delete] }
+    ]
+  ) {
+  id: ID!
+  transactionId: Int!
+  merchantId: Int!
+  amount: Int!
+  type: String!
+  payload: String!
+  restaurantId: ID!
+  timestampEpoch: Int!
+}
+
+type OrderProduct {
+  id: ID!
+  name: String!
+  price: Int!
+  quantity: Int!
+  notes: String
+  served: Boolean
+  modifierGroups: [OrderModifierGroup]
+}
+
+type OrderModifierGroup {
+  id: ID!
+  name: String!
+  modifiers: [OrderModifier]
+}
+
+type OrderModifier {
+  id: ID!
+  name: String!
+  price: Int!
+  quantity: Int!
+}
+
+type S3Object {
+  bucket: String!
+  region: String!
+  key: String!
+  identityPoolId: String
+}
+
+type Address {
+  formattedAddress: String!
+  aptSuite: String
+}
+
+type Location {
+  lat: Float
+  lng: Float
+}
+
+type OperatingHours {
+  monday: [OperatingTimes!]!
+  tuesday: [OperatingTimes!]!
+  wednesday: [OperatingTimes!]!
+  thursday: [OperatingTimes!]!
+  friday: [OperatingTimes!]!
+  saturday: [OperatingTimes!]!
+  sunday: [OperatingTimes!]!
+}
+
+type OperatingTimes {
+  openingTime: AWSTime
+  closingTime: AWSTime
+}
+
+enum OrderStatus {
+  NEW
+  COMPLETED
+  CANCELLED
+}
+
+enum OrderType {
+  DINEIN
+  TAKEAWAY
+}
+
+input ProcessOrderInput {
+  orderRestaurantId: String!
+  orderUserId: String!
+  notes: String
+  products: [ProcessOrderProduct!]
+  type: OrderType!
+  number: String!
+  table: String
+  total: Int!
+  paid: Boolean
+  registerId: ID
+}
+
+input ProcessOrderProduct {
+  id: ID!
+  name: String!
+  price: Int!
+  quantity: Int!
+  notes: String
+  modifierGroups: [ProcessOrderModifierGroup]
+}
+
+input ProcessOrderModifierGroup {
+  id: ID!
+  name: String!
+  hideForCustomer: Boolean
+  modifiers: [ProcessOrderModifier]
+}
+
+input ProcessOrderModifier {
+  id: ID!
+  name: String!
+  price: Int!
+  preSelectedQuantity: Int
+  quantity: Int!
+}
+
+type Mutation {
+  processOrder(input: ProcessOrderInput!): String
+}

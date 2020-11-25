@@ -1,0 +1,16 @@
+.contentWrapper {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin: 0 20px;
+}
+
+.draggableItem {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: 7px;
+  margin-bottom: 7px;
+}

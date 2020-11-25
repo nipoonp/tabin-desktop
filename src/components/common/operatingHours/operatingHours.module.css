@@ -1,0 +1,79 @@
+.operatingHoursWrapper {
+  display: flex;
+}
+
+.operatingTimeGroup {
+  display: flex;
+  align-items: center;
+}
+
+.operatingHourDay {
+  height: 56px;
+  display: flex;
+  align-items: center;
+}
+
+.day {
+  min-width: 160px;
+  padding: 0 20px;
+}
+
+.checkboxWrapper {
+  width: 30px;
+}
+
+.checkboxText {
+  width: 100px;
+  margin-left: 20px;
+}
+
+.operatingTimesWrapper {
+  margin-bottom: 10px;
+}
+
+.operatingTime {
+  width: 150px;
+  margin: 5px 0;
+}
+
+.operatingHoursTimeDropdownSeparator {
+  padding: 0 20px;
+}
+
+.addRemoveTimeGroupIcon {
+  font-size: 20px;
+  padding: 0 20px;
+  color: var(--primary-color);
+  cursor: pointer;
+}
+
+.closedOperatingHourGroup {
+  height: 56px;
+}
+
+@media (max-width: 744px) {
+  .operatingHoursWrapper {
+    flex-wrap: wrap;
+    justify-content: left;
+    border-top: 1px solid #eeeeee;
+    margin-bottom: 20px;
+  }
+
+  .operatingTime {
+    width: 120px;
+  }
+
+  .addRemoveTimeGroupIcon {
+    padding-right: 0px;
+  }
+
+  .day {
+    min-width: 0;
+    padding-left: 0;
+  }
+
+  .checkboxText {
+    width: 0;
+    margin-left: 15px;
+  }
+}
