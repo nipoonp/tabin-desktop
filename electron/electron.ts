@@ -2,6 +2,7 @@ import electron from 'electron';
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 import { ipcMain } from 'electron';
+import { Updater } from './updater';
 
 import path from 'path';
 // import isDev from 'electron-is-dev';
@@ -19,6 +20,11 @@ let verifoneClient = new net.Socket();
 let mainWindow: any;
 
 function createWindow() {
+
+  // Check for app updates 3 seconds after launch
+  const updater = new Updater();
+  setTimeout(updater.update, 3000);
+
   // mainWindow = new BrowserWindow({width: 900, height: 680, fullscreen: true});
   mainWindow = new BrowserWindow({
     width: 1024, height: 900, fullscreen: true, webPreferences: {
@@ -29,7 +35,7 @@ function createWindow() {
   // mainWindow.loadURL(`file://${path.join(__dirname, '../build/index.html')}`);
   mainWindow.loadFile(path.join(__dirname, "index.html"));
   mainWindow.on('closed', () => { mainWindow = null });
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
 }
 
 app.on('ready', createWindow);

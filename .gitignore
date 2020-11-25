@@ -43,4 +43,7 @@ go/
 # archive
 archive/
 
+# Private folder
+private/
+
 amplify/mock-data

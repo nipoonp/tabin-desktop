@@ -2,8 +2,9 @@
   "name": "Tabin",
   "description": "Tabin Self Service Kiosk",
   "author": "Tabin",
-  "version": "0.1.0",
-  "private": true,
+  "version": "1.0.1",
+  "repository": "https://github.com/nipoonp/tabin-desktop",
+  "homepage": "https://github.com/nipoonp/tabin-desktop",
   "resolutions": {
     "apollo-client": "2.6.3"
   },
@@ -34,6 +35,8 @@
     "aws-appsync": "^1.8.1",
     "date-fns": "^2.15.0",
     "electron-is-dev": "^1.2.0",
+    "electron-log": "^4.3.0",
+    "electron-updater": "^4.3.5",
     "font-awesome": "^4.7.0",
     "graphql-tag": "^2.10.1",
     "lodash.debounce": "^4.0.8",
@@ -70,7 +73,9 @@
     "start:desktop": "npm run build:desktop && electron ./build/electron.js",
     "build:desktop": "tsc -p electron/tsconfig.json",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "build": "electron-builder -mwl",
+    "release": "electron-builder -mwl -p 'onTagOrDraft'"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -82,12 +87,16 @@
   "build": {
     "appId": "com.tabin.desktop",
     "copyright": "Copyright 2020 Zeal Private Ltd",
+    "publish": {
+      "provider": "github"
+    },
     "mac": {
-      "category": "public.app-category.business",
-      "target": "dmg"
-    }, 
-    "win":{
-      "target": "zip"
+      "category": "public.app-category.business"
+    },
+    "win": {
+      "certificateFile": "private/electron-tabin-desktop-development.p12",
+      "certificatePassword": "",
+      "verifyUpdateCodeSignature": false
     },
     "linux": {
       "category": "Office"
