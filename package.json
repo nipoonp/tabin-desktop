@@ -75,7 +75,8 @@
     "build:desktop": "tsc -p electron/tsconfig.json",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "release": "electron-builder -mwl -p 'onTagOrDraft'",
+    "release-all": "electron-builder -mwl -p 'onTagOrDraft'",
+    "release": "electron-builder -w",
     "electron-dev": "concurrently \"BROWSER=none npm run start\" \"wait-on http://localhost:3000 && electron .\""
   },
   "eslintConfig": {
@@ -92,13 +93,19 @@
     "copyright": "Copyright 2020 Zeal Private Ltd",
     "mac": {
       "category": "public.app-category.business",
-      "target": "dmg"
+      "target": "dmg",
+      "icon": "build/icon.icns"
     }, 
     "win":{
-      "target": "zip"
+      "target": "zip",
+      "icon": "build/icon.ico",
+      "certificateFile": "private/electron-tabin-desktop-development.p12",
+      "certificatePassword": "",
+      "verifyUpdateCodeSignature": false
     },
     "linux": {
-      "category": "Office"
+      "category": "Office",
+      "icon": "build/icon.png"
     }
   },
   "browserslist": {
