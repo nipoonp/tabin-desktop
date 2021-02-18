@@ -24,7 +24,7 @@ import {
 } from "../../model/model";
 import { Logger } from "aws-amplify";
 import { toast } from "../../tabin/components/toast";
-import { isItemAvailable } from "../../util/isItemAvailable";
+import { isItemSoldOut } from "../../util/isItemAvailable";
 import { convertCentsToDollars } from "../../util/moneyConversion";
 import { MessageBox } from "../../tabin/components/messageBox";
 import { ErrorColor, GrayColor } from "../../tabin/components/colors";
@@ -33,7 +33,9 @@ import {
   IGET_RESTAURANT_PRODUCT,
   IGET_RESTAURANT_MODIFIER_GROUP,
   IGET_RESTAURANT_MODIFIER,
+  IGET_RESTAURANT_CATEGORY,
 } from "../../graphql/customQueries";
+import { KeyboardTextArea } from "../../tabin/components/keyboardTextArea";
 import { KioskModal } from "../../tabin/components/kioskModal";
 import { KioskButton } from "../../tabin/components/kioskButton";
 import { SizedBox } from "../../tabin/components/sizedBox";
@@ -41,13 +43,13 @@ import { KioskStepper } from "../../tabin/components/kioskStepper";
 import { KioskCheckbox } from "../../tabin/components/kioskCheckbox";
 import { KioskRadio } from "../../tabin/components/kioskRadio";
 import { Separator6 } from "../../tabin/components/separator";
-import { InputV2 } from "../../tabin/components/inputv2";
 
 const logger = new Logger("productModal");
 const styles = require("./product.module.css");
 
 export const ProductModal = (props: {
   //
+  category: IGET_RESTAURANT_CATEGORY;
   product: IGET_RESTAURANT_PRODUCT;
   isOpen: boolean;
   onAddItem?: (product: ICartProduct) => void;
@@ -389,8 +391,14 @@ export const ProductModal = (props: {
       id: props.product.id,
       name: props.product.name,
       price: props.product.price,
+      image: props.product.image ? { key: props.product.image.key, region: props.product.image.region, bucket: props.product.image.bucket, identityPoolId: props.product.image.identityPoolId } : null,
       quantity: quantity,
       notes: notes,
+      category: {
+        id: props.category.id,
+        name: props.category.name,
+        image: props.category.image ? { key: props.category.image.key, region: props.category.image.region, bucket: props.category.image.bucket, identityPoolId: props.category.image.identityPoolId } : null,
+      },
       modifierGroups: selectedModifierGroups,
     };
 
@@ -410,8 +418,8 @@ export const ProductModal = (props: {
     setQuantity(count);
   };
 
-  const onNotesChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNotes(event.target.value);
+  const onNotesChange = (value: string) => {
+    setNotes(value);
   };
 
   const modifierGroups = (
@@ -480,10 +488,10 @@ export const ProductModal = (props: {
     <>
       <Title2Font>Special instructions</Title2Font>
       <Space3 />
-      <InputV2
+      <KeyboardTextArea
         placeholder={"Leave a note for the kitchen"}
-        onChange={onNotesChange}
-        value={notes || ""}
+        onChangeKeyboard={onNotesChange}
+        value={notes}
       />
     </>
   );
@@ -647,7 +655,7 @@ export const ModifierGroup = (props: {
 
   const isModifierDisabled = (modifier: IGET_RESTAURANT_MODIFIER) => {
     return (
-      !isItemAvailable(modifier.soldOut, modifier.soldOutDate) ||
+      isItemSoldOut(modifier.soldOut, modifier.soldOutDate) ||
       (!(
         props.modifierGroup.choiceMin === 1 &&
         props.modifierGroup.choiceMax === 1
@@ -739,7 +747,7 @@ export const ModifierGroup = (props: {
                 props.selectedModifiers
               )}
               soldOut={
-                !isItemAvailable(m.modifier.soldOut, m.modifier.soldOutDate)
+                isItemSoldOut(m.modifier.soldOut, m.modifier.soldOutDate)
               }
               disabled={props.disabled || isModifierDisabled(m.modifier)}
             />

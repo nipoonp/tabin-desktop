@@ -16,7 +16,7 @@ const styles = require("./unauthorised.module.css");
 export default () => {
   return (
     <>
-      {!isMobile && <HomeNav darkTheme={false} />}
+      <HomeNav />
       <div className={styles.containerWrapper}>
         <div className={styles.container}>
           <div className={styles.content}>

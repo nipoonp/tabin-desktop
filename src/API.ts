@@ -19,9 +19,24 @@ export type ProcessOrderProduct = {
   id: string,
   name: string,
   price: number,
+  image?: ProcessOrderS3Object | null,
   quantity: number,
   notes?: string | null,
+  category?: ProcessOrderCategory | null,
   modifierGroups?: Array< ProcessOrderModifierGroup | null > | null,
+};
+
+export type ProcessOrderS3Object = {
+  bucket: string,
+  region: string,
+  key: string,
+  identityPoolId?: string | null,
+};
+
+export type ProcessOrderCategory = {
+  id: string,
+  name: string,
+  image?: ProcessOrderS3Object | null,
 };
 
 export type ProcessOrderModifierGroup = {
@@ -403,8 +418,24 @@ export type CreateCategoryInput = {
   name: string,
   image?: S3ObjectInput | null,
   displaySequence: number,
+  availability?: ItemAvailabilityInput | null,
   categoryRestaurantId: string,
   owner?: string | null,
+};
+
+export type ItemAvailabilityInput = {
+  monday: Array< ItemAvailabilityTimeInput >,
+  tuesday: Array< ItemAvailabilityTimeInput >,
+  wednesday: Array< ItemAvailabilityTimeInput >,
+  thursday: Array< ItemAvailabilityTimeInput >,
+  friday: Array< ItemAvailabilityTimeInput >,
+  saturday: Array< ItemAvailabilityTimeInput >,
+  sunday: Array< ItemAvailabilityTimeInput >,
+};
+
+export type ItemAvailabilityTimeInput = {
+  startTime?: string | null,
+  endTime?: string | null,
 };
 
 export type ModelCategoryConditionInput = {
@@ -421,6 +452,7 @@ export type UpdateCategoryInput = {
   name?: string | null,
   image?: S3ObjectInput | null,
   displaySequence?: number | null,
+  availability?: ItemAvailabilityInput | null,
   categoryRestaurantId?: string | null,
   owner?: string | null,
 };
@@ -466,6 +498,7 @@ export type CreateProductInput = {
   price: number,
   soldOutDate?: string | null,
   soldOut?: boolean | null,
+  availability?: ItemAvailabilityInput | null,
   productRestaurantId: string,
   owner?: string | null,
 };
@@ -490,6 +523,7 @@ export type UpdateProductInput = {
   price?: number | null,
   soldOutDate?: string | null,
   soldOut?: boolean | null,
+  availability?: ItemAvailabilityInput | null,
   productRestaurantId?: string | null,
   owner?: string | null,
 };
@@ -657,10 +691,17 @@ export type OrderProductInput = {
   id: string,
   name: string,
   price: number,
+  image?: S3ObjectInput | null,
   quantity: number,
   notes?: string | null,
-  served?: boolean | null,
+  category?: OrderCategoryInput | null,
   modifierGroups?: Array< OrderModifierGroupInput | null > | null,
+};
+
+export type OrderCategoryInput = {
+  id: string,
+  name: string,
+  image?: S3ObjectInput | null,
 };
 
 export type OrderModifierGroupInput = {
@@ -1919,6 +1960,44 @@ export type CreateCategoryMutation = {
       identityPoolId: string | null,
     } | null,
     displaySequence: number,
+    availability:  {
+      __typename: "ItemAvailability",
+      monday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      tuesday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      wednesday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      thursday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      friday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      saturday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      sunday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+    } | null,
     products:  {
       __typename: "ModelCategoryProductLinkConnection",
       items:  Array< {
@@ -1958,6 +2037,44 @@ export type UpdateCategoryMutation = {
       identityPoolId: string | null,
     } | null,
     displaySequence: number,
+    availability:  {
+      __typename: "ItemAvailability",
+      monday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      tuesday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      wednesday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      thursday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      friday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      saturday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      sunday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+    } | null,
     products:  {
       __typename: "ModelCategoryProductLinkConnection",
       items:  Array< {
@@ -1997,6 +2114,44 @@ export type DeleteCategoryMutation = {
       identityPoolId: string | null,
     } | null,
     displaySequence: number,
+    availability:  {
+      __typename: "ItemAvailability",
+      monday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      tuesday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      wednesday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      thursday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      friday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      saturday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      sunday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+    } | null,
     products:  {
       __typename: "ModelCategoryProductLinkConnection",
       items:  Array< {
@@ -2252,6 +2407,44 @@ export type CreateProductMutation = {
     price: number,
     soldOutDate: string | null,
     soldOut: boolean | null,
+    availability:  {
+      __typename: "ItemAvailability",
+      monday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      tuesday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      wednesday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      thursday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      friday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      saturday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      sunday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+    } | null,
     categories:  {
       __typename: "ModelCategoryProductLinkConnection",
       items:  Array< {
@@ -2322,6 +2515,44 @@ export type UpdateProductMutation = {
     price: number,
     soldOutDate: string | null,
     soldOut: boolean | null,
+    availability:  {
+      __typename: "ItemAvailability",
+      monday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      tuesday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      wednesday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      thursday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      friday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      saturday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      sunday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+    } | null,
     categories:  {
       __typename: "ModelCategoryProductLinkConnection",
       items:  Array< {
@@ -2392,6 +2623,44 @@ export type DeleteProductMutation = {
     price: number,
     soldOutDate: string | null,
     soldOut: boolean | null,
+    availability:  {
+      __typename: "ItemAvailability",
+      monday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      tuesday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      wednesday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      thursday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      friday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      saturday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+      sunday:  Array< {
+        __typename: "ItemAvailabilityTime",
+        startTime: string | null,
+        endTime: string | null,
+      } >,
+    } | null,
     categories:  {
       __typename: "ModelCategoryProductLinkConnection",
       items:  Array< {
@@ -3096,9 +3365,20 @@ export type CreateOrderMutation = {
       id: string,
       name: string,
       price: number,
+      image:  {
+        __typename: "S3Object",
+        bucket: string,
+        region: string,
+        key: string,
+        identityPoolId: string | null,
+      } | null,
       quantity: number,
       notes: string | null,
-      served: boolean | null,
+      category:  {
+        __typename: "OrderCategory",
+        id: string,
+        name: string,
+      } | null,
       modifierGroups:  Array< {
         __typename: "OrderModifierGroup",
         id: string,
@@ -3140,9 +3420,20 @@ export type UpdateOrderMutation = {
       id: string,
       name: string,
       price: number,
+      image:  {
+        __typename: "S3Object",
+        bucket: string,
+        region: string,
+        key: string,
+        identityPoolId: string | null,
+      } | null,
       quantity: number,
       notes: string | null,
-      served: boolean | null,
+      category:  {
+        __typename: "OrderCategory",
+        id: string,
+        name: string,
+      } | null,
       modifierGroups:  Array< {
         __typename: "OrderModifierGroup",
         id: string,
@@ -3184,9 +3475,20 @@ export type DeleteOrderMutation = {
       id: string,
       name: string,
       price: number,
+      image:  {
+        __typename: "S3Object",
+        bucket: string,
+        region: string,
+        key: string,
+        identityPoolId: string | null,
+      } | null,
       quantity: number,
       notes: string | null,
-      served: boolean | null,
+      category:  {
+        __typename: "OrderCategory",
+        id: string,
+        name: string,
+      } | null,
       modifierGroups:  Array< {
         __typename: "OrderModifierGroup",
         id: string,

@@ -4,15 +4,21 @@ import { Title3Font } from "../../../tabin/components/fonts";
 import { Space4, Space2 } from "../../../tabin/components/spaces";
 import { InputV2 } from "../../../tabin/components/inputv2";
 import { useReceiptPrinter } from "../../../context/receiptPrinter-context";
-import { EOrderType } from "../../../model/model";
+import { EOrderType, ICartProduct } from "../../../model/model";
 import { useRegister } from "../../../context/register-context";
 
-const TEST_PRODUCT = [
+const TEST_PRODUCT: ICartProduct[] = [
   {
     id: "",
     name: "Samosa",
     price: 1,
+    image: null,
     quantity: 2,
+    category: {
+      id: "",
+      name: "Test Category",
+      image: null,
+    },
     modifierGroups: [
       {
         id: "",
@@ -80,49 +86,6 @@ const TEST_PRODUCT = [
           },
         ],
       },
-    ],
-    notes: null,
-  }, {
-    id: "",
-    name: "Samosa",
-    price: 1,
-    quantity: 2,
-    modifierGroups: [
-      {
-        id: "",
-        name: "Choice of Sauce 1",
-        hideForCustomer: true,
-        modifiers: [
-          {
-            id: "",
-            name: "Sauce",
-            price: 50,
-            preSelectedQuantity: 0,
-            quantity: 1,
-          },
-        ],
-      },
-      {
-        id: "",
-        name: "Choice of Sauce 2",
-        modifiers: [
-          {
-            id: "",
-            name: "Sauce",
-            price: 50,
-            preSelectedQuantity: 0,
-            quantity: 2,
-          },
-        ],
-      }
-    ],
-    notes: "Product notes",
-  }, {
-    id: "",
-    name: "Samosa",
-    price: 1,
-    quantity: 2,
-    modifierGroups: [
     ],
     notes: "Product notes",
   },

@@ -32,7 +32,7 @@ import { KioskButton } from "../../tabin/components/kioskButton";
 import { ItemAddedUpdatedModal } from "../modals/itemAddedUpdatedModal";
 import { ICartProduct } from "../../model/model";
 import { SizedBox } from "../../tabin/components/sizedBox";
-import { isItemAvailable } from "../../util/isItemAvailable";
+import { isItemAvailable, isItemSoldOut } from "../../util/isItemAvailable";
 
 const styles = require("./restaurant.module.css");
 
@@ -56,7 +56,7 @@ export const Restaurant = (props: { restaurantID: string }) => {
   } = useGetRestaurantQuery(props.restaurantID);
 
   // states
-  const [selectCategoryId, setSelectedCategoryId] = useState<string | null>(
+  const [selectedCategory, setSelectedCategory] = useState<IGET_RESTAURANT_CATEGORY | null>(
     null
   );
   const [
@@ -69,7 +69,14 @@ export const Restaurant = (props: { restaurantID: string }) => {
   React.useEffect(() => {
     if (restaurant) {
       setRestaurant(restaurant);
-      setSelectedCategoryId(restaurant.categories.items[0].id);
+
+      restaurant.categories.items.every(c => {
+        if (isItemAvailable(c.availability)) {
+          setSelectedCategory(c);
+          return false;
+        }
+        return true;
+      })
     }
   }, [restaurant]);
 
@@ -125,11 +132,16 @@ export const Restaurant = (props: { restaurantID: string }) => {
     return <div>Restaurant is not verified</div>;
   }
 
+  if (selectedCategory == null) {
+    return <div>No available category</div>
+  }
+
   const productModal = (
     <>
-      {selectedProduct && restaurant && showProductModal && (
+      {selectedCategory && selectedProduct && restaurant && showProductModal && (
         <ProductModal
           isOpen={showProductModal}
+          category={selectedCategory}
           product={selectedProduct}
           onAddItem={onAddItem}
           onClose={onCloseProductModal}
@@ -159,7 +171,8 @@ export const Restaurant = (props: { restaurantID: string }) => {
     </>
   );
 
-  const onClickProduct = (product: IGET_RESTAURANT_PRODUCT) => {
+  const onClickProduct = (category: IGET_RESTAURANT_CATEGORY, product: IGET_RESTAURANT_PRODUCT) => {
+    setSelectedCategory(category);
     setSelectedProduct(product);
     setShowProductModal(true);
   };
@@ -181,11 +194,12 @@ export const Restaurant = (props: { restaurantID: string }) => {
   //   );
   // };
 
-  const productDisplay = (product: IGET_RESTAURANT_PRODUCT) => {
-    const productIsAvailable = isItemAvailable(
+  const productDisplay = (category: IGET_RESTAURANT_CATEGORY, product: IGET_RESTAURANT_PRODUCT) => {
+    const isSoldOut = isItemSoldOut(
       product.soldOut,
       product.soldOutDate
     );
+    const isAvailable = isItemAvailable(product.availability);
 
     return (
       <>
@@ -194,9 +208,9 @@ export const Restaurant = (props: { restaurantID: string }) => {
             border: "1px solid #e0e0e0",
             padding: "16px",
             borderRadius: "10px",
-            opacity: productIsAvailable ? "1" : "0.5",
+            opacity: !isSoldOut && isAvailable ? "1" : "0.5",
           }}
-          onClick={() => productIsAvailable && onClickProduct(product)}
+          onClick={() => !isSoldOut && isAvailable && onClickProduct(category, product)}
         >
           <div style={{ margin: "0 auto" }}>
             {product.image && (
@@ -220,7 +234,7 @@ export const Restaurant = (props: { restaurantID: string }) => {
           </div>
 
           <BoldFont style={{ fontSize: "18px", textAlign: "center" }}>
-            {!productIsAvailable
+            {!isAvailable ? `${product.name} (UNAVAILABLE)` : isSoldOut
               ? `${product.name} (SOLD OUT)`
               : `${product.name}`}
           </BoldFont>
@@ -254,10 +268,10 @@ export const Restaurant = (props: { restaurantID: string }) => {
             <div style={{ borderBottom: "1px solid #e0e0e0" }}></div>
           )}
           <Category
-            isSelected={selectCategoryId == c.id}
+            isSelected={selectedCategory != null && selectedCategory.id == c.id}
             category={c}
-            onCategorySelected={(id: string) => {
-              setSelectedCategoryId(id);
+            onCategorySelected={(category: IGET_RESTAURANT_CATEGORY) => {
+              setSelectedCategory(category);
             }}
           />
         </>
@@ -268,7 +282,7 @@ export const Restaurant = (props: { restaurantID: string }) => {
   const menuProducts = (
     <div style={{ width: "100%" }}>
       {restaurant.categories.items.map((c) => {
-        if (selectCategoryId != null && selectCategoryId !== c.id) {
+        if (selectedCategory != null && selectedCategory.id !== c.id) {
           return;
         }
 
@@ -284,7 +298,7 @@ export const Restaurant = (props: { restaurantID: string }) => {
               }}
             >
               {c.products.items.map((p) => {
-                return productDisplay(p.product);
+                return productDisplay(c, p.product);
               })}
             </div>
           </>
@@ -394,28 +408,32 @@ const RestaurantImage = (props: { image: IS3Image }) => {
 const Category = (props: {
   isSelected: boolean;
   category: IGET_RESTAURANT_CATEGORY;
-  onCategorySelected: (id: string) => void;
+  onCategorySelected: (category: IGET_RESTAURANT_CATEGORY) => void;
 }) => {
   const { isSelected, category, onCategorySelected } = props;
+
+  const isAvailable = isItemAvailable(category.availability);
 
   return (
     <div
       key={category.id}
       style={{
-        height: "85px",
+        // height: "85px",
         padding: "30px 24px",
         borderBottom: "1px solid #e0e0e0",
         borderLeft: isSelected ? "8px solid var(--primary-color)" : "none",
       }}
       onClick={() => {
-        onCategorySelected(category.id);
+        isAvailable && onCategorySelected(category);
       }}
     >
-      {isSelected ? (
-        <BoldFont>{category.name}</BoldFont>
-      ) : (
-        <NormalFont style={{ fontWeight: 300 }}>{category.name}</NormalFont>
-      )}
+      {!isAvailable ?
+        <NormalFont style={{ fontWeight: 300, opacity: isAvailable ? "1" : "0.5", }}>{category.name} (UNAVAILABLE)</NormalFont>
+        : isSelected ? (
+          <BoldFont>{category.name}</BoldFont>
+        ) : (
+            <NormalFont style={{ fontWeight: 300 }}>{category.name}</NormalFont>
+          )}
     </div>
   );
 };

@@ -23,7 +23,7 @@ import { GrayColor, PrimaryColor } from "../../tabin/components/colors";
 import { convertCentsToDollars } from "../../util/moneyConversion";
 import { useMutation } from "react-apollo-hooks";
 import { PROCESS_ORDER } from "../../graphql/customMutations";
-import { IGET_DASHBOARD_REGISTER_PRINTER, IGET_RESTAURANT_PRODUCT } from "../../graphql/customQueries";
+import { IGET_DASHBOARD_REGISTER_PRINTER, IGET_RESTAURANT_CATEGORY, IGET_RESTAURANT_PRODUCT } from "../../graphql/customQueries";
 import {
   restaurantPath,
   beginOrderPath,
@@ -42,6 +42,7 @@ import { Separator6 } from "../../tabin/components/separator";
 import { useUser } from "../../context/user-context";
 import { ModalV2 } from "../../tabin/components/modalv2";
 import { format } from "date-fns";
+import { KeyboardTextArea } from "../../tabin/components/keyboardTextArea";
 import { KioskPageWrapper } from "../../tabin/components/kioskPageWrapper";
 import {
   useSmartpay,
@@ -59,7 +60,6 @@ import {
 } from "../../context/verifone-context";
 import { useRegister } from "../../context/register-context";
 import { useReceiptPrinter } from "../../context/receiptPrinter-context";
-import { TextAreaV2 } from "../../tabin/components/textAreav2";
 
 const styles = require("./checkout.module.css");
 
@@ -213,8 +213,8 @@ export const Checkout = () => {
     setShowPaymentModal(false);
   };
 
-  const onNotesChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setNotes(event.target.value);
+  const onNotesChange = (value: string) => {
+    setNotes(value);
   };
 
   // submit callback
@@ -240,7 +240,7 @@ export const Checkout = () => {
         orderRestaurantId: restaurant.id,
         orderUserId: user.id,
         notes: notes,
-        products: products,
+        products: JSON.parse(JSON.stringify(products)) as ICartProduct[], // copy obj so we can mutate it later
         type: orderType,
         number: orderNumber,
         table: tableNumber,
@@ -252,6 +252,20 @@ export const Checkout = () => {
       if (tableNumber == null || tableNumber == "") {
         delete variables.table;
       }
+
+      variables.products.forEach((product) => {
+        if (product.modifierGroups.length == 0) {
+          delete product.modifierGroups;
+        }
+
+        if (product.image == null) {
+          delete product.image;
+        }
+
+        if (product.category.image == null) {
+          delete product.category.image;
+        }
+      })
 
       // process order
       const res = await processOrderMutation({
@@ -347,60 +361,69 @@ export const Checkout = () => {
       return;
     }
 
-    const productsToPrint1 = filterPrintProducts(products, register.printers.items[0]);
-    if (register.printers.items[0].address && productsToPrint1.length > 0) {
-      printReceipt1({
-        printerAddress: register.printers.items[0].address,
-        eftposReceipt: eftposReceipt,
-        hideModifierGroupsForCustomer: true,
-        restaurant: {
-          name: restaurant.name,
-          address: `${restaurant.address.aptSuite || ""} ${restaurant.address
-            .formattedAddress || ""}`,
-        },
-        notes: notes,
-        products: productsToPrint1,
-        total: total,
-        type: orderType || EOrderType.TAKEAWAY,
-        number: orderNumber,
-        table: tableNumber,
-      });
+    if (register.printers && register.printers.items[0] && register.printers.items[0].address) {
+      const productsToPrint1 = filterPrintProducts(products, register.printers.items[0]);
+
+      if (productsToPrint1.length > 0) {
+        printReceipt1({
+          printerAddress: register.printers.items[0].address,
+          eftposReceipt: eftposReceipt,
+          hideModifierGroupsForCustomer: true,
+          restaurant: {
+            name: restaurant.name,
+            address: `${restaurant.address.aptSuite || ""} ${restaurant.address
+              .formattedAddress || ""}`,
+          },
+          notes: notes,
+          products: productsToPrint1,
+          total: total,
+          type: orderType || EOrderType.TAKEAWAY,
+          number: orderNumber,
+          table: tableNumber,
+        });
+      }
     }
 
-    const productsToPrint2 = filterPrintProducts(products, register.printers.items[1]);
-    if (register.printers.items[1].address && productsToPrint2.length > 0) {
-      printReceipt2({
-        printerAddress: register.printers.items[1].address,
-        restaurant: {
-          name: restaurant.name,
-          address: `${restaurant.address.aptSuite || ""} ${restaurant.address
-            .formattedAddress || ""}`,
-        },
-        notes: notes,
-        products: productsToPrint2,
-        total: total,
-        type: orderType || EOrderType.TAKEAWAY,
-        number: orderNumber,
-        table: tableNumber,
-      });
+    if (register.printers && register.printers.items[1] && register.printers.items[1].address) {
+      const productsToPrint2 = filterPrintProducts(products, register.printers.items[1]);
+
+      if (productsToPrint2.length > 0) {
+        printReceipt2({
+          printerAddress: register.printers.items[1].address,
+          restaurant: {
+            name: restaurant.name,
+            address: `${restaurant.address.aptSuite || ""} ${restaurant.address
+              .formattedAddress || ""}`,
+          },
+          notes: notes,
+          products: productsToPrint2,
+          total: total,
+          type: orderType || EOrderType.TAKEAWAY,
+          number: orderNumber,
+          table: tableNumber,
+        });
+      }
     }
 
-    const productsToPrint3 = filterPrintProducts(products, register.printers.items[2]);
-    if (register.printers.items[2].address && productsToPrint3.length > 0) {
-      printReceipt3({
-        printerAddress: register.printers.items[2].address,
-        restaurant: {
-          name: restaurant.name,
-          address: `${restaurant.address.aptSuite || ""} ${restaurant.address
-            .formattedAddress || ""}`,
-        },
-        notes: notes,
-        products: productsToPrint3,
-        total: total,
-        type: orderType || EOrderType.TAKEAWAY,
-        number: orderNumber,
-        table: tableNumber,
-      });
+    if (register.printers && register.printers.items[2] && register.printers.items[2].address) {
+      const productsToPrint3 = filterPrintProducts(products, register.printers.items[2]);
+
+      if (productsToPrint3.length > 0) {
+        printReceipt3({
+          printerAddress: register.printers.items[2].address,
+          restaurant: {
+            name: restaurant.name,
+            address: `${restaurant.address.aptSuite || ""} ${restaurant.address
+              .formattedAddress || ""}`,
+          },
+          notes: notes,
+          products: productsToPrint3,
+          total: total,
+          type: orderType || EOrderType.TAKEAWAY,
+          number: orderNumber,
+          table: tableNumber,
+        });
+      }
     }
   };
 
@@ -562,6 +585,7 @@ export const Checkout = () => {
   };
 
   const editProductModal = () => {
+    let category: IGET_RESTAURANT_CATEGORY | null = null;
     let product: IGET_RESTAURANT_PRODUCT | null = null;
 
     if (!productToEdit) {
@@ -569,6 +593,10 @@ export const Checkout = () => {
     }
 
     restaurant!.categories.items.forEach((c) => {
+      if (c.id == productToEdit.product.category.id) {
+        category = c;
+      }
+
       c.products.items.forEach((p) => {
         if (p.product.id == productToEdit.product.id) {
           product = p.product;
@@ -576,7 +604,7 @@ export const Checkout = () => {
       });
     });
 
-    if (!product) {
+    if (!product || !category) {
       return <></>;
     }
 
@@ -590,6 +618,7 @@ export const Checkout = () => {
 
     return (
       <ProductModal
+        category={category}
         product={product}
         isOpen={showEditProductModal}
         onClose={onCloseEditProductModal}
@@ -910,10 +939,10 @@ export const Checkout = () => {
       {/* this condition is required because we cannot have two keyboards active at a time, we would have checkout and product keyboards active at a time and it would not work */}
       {/* can figure out a better way to do it in the future with refs */}
       {!showEditProductModal && (
-        <TextAreaV2
+        <KeyboardTextArea
           placeholder={"Leave a note for the restaurant"}
           value={notes}
-          onChange={onNotesChange}
+          onChangeKeyboard={onNotesChange}
         />
       )}
     </>
@@ -977,7 +1006,7 @@ const OrderSummary = (props: {
     displayOrder: number,
     productQuantity: number
   ) => void;
-  onNotesChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  onNotesChange: (value: string) => void;
 }) => {
   // context
   const { products } = useCart();

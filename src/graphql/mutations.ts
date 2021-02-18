@@ -981,6 +981,36 @@ export const createCategory = /* GraphQL */ `
         identityPoolId
       }
       displaySequence
+      availability {
+        monday {
+          startTime
+          endTime
+        }
+        tuesday {
+          startTime
+          endTime
+        }
+        wednesday {
+          startTime
+          endTime
+        }
+        thursday {
+          startTime
+          endTime
+        }
+        friday {
+          startTime
+          endTime
+        }
+        saturday {
+          startTime
+          endTime
+        }
+        sunday {
+          startTime
+          endTime
+        }
+      }
       products {
         items {
           id
@@ -1015,6 +1045,36 @@ export const updateCategory = /* GraphQL */ `
         identityPoolId
       }
       displaySequence
+      availability {
+        monday {
+          startTime
+          endTime
+        }
+        tuesday {
+          startTime
+          endTime
+        }
+        wednesday {
+          startTime
+          endTime
+        }
+        thursday {
+          startTime
+          endTime
+        }
+        friday {
+          startTime
+          endTime
+        }
+        saturday {
+          startTime
+          endTime
+        }
+        sunday {
+          startTime
+          endTime
+        }
+      }
       products {
         items {
           id
@@ -1049,6 +1109,36 @@ export const deleteCategory = /* GraphQL */ `
         identityPoolId
       }
       displaySequence
+      availability {
+        monday {
+          startTime
+          endTime
+        }
+        tuesday {
+          startTime
+          endTime
+        }
+        wednesday {
+          startTime
+          endTime
+        }
+        thursday {
+          startTime
+          endTime
+        }
+        friday {
+          startTime
+          endTime
+        }
+        saturday {
+          startTime
+          endTime
+        }
+        sunday {
+          startTime
+          endTime
+        }
+      }
       products {
         items {
           id
@@ -1269,6 +1359,36 @@ export const createProduct = /* GraphQL */ `
       price
       soldOutDate
       soldOut
+      availability {
+        monday {
+          startTime
+          endTime
+        }
+        tuesday {
+          startTime
+          endTime
+        }
+        wednesday {
+          startTime
+          endTime
+        }
+        thursday {
+          startTime
+          endTime
+        }
+        friday {
+          startTime
+          endTime
+        }
+        saturday {
+          startTime
+          endTime
+        }
+        sunday {
+          startTime
+          endTime
+        }
+      }
       categories {
         items {
           id
@@ -1330,6 +1450,36 @@ export const updateProduct = /* GraphQL */ `
       price
       soldOutDate
       soldOut
+      availability {
+        monday {
+          startTime
+          endTime
+        }
+        tuesday {
+          startTime
+          endTime
+        }
+        wednesday {
+          startTime
+          endTime
+        }
+        thursday {
+          startTime
+          endTime
+        }
+        friday {
+          startTime
+          endTime
+        }
+        saturday {
+          startTime
+          endTime
+        }
+        sunday {
+          startTime
+          endTime
+        }
+      }
       categories {
         items {
           id
@@ -1391,6 +1541,36 @@ export const deleteProduct = /* GraphQL */ `
       price
       soldOutDate
       soldOut
+      availability {
+        monday {
+          startTime
+          endTime
+        }
+        tuesday {
+          startTime
+          endTime
+        }
+        wednesday {
+          startTime
+          endTime
+        }
+        thursday {
+          startTime
+          endTime
+        }
+        friday {
+          startTime
+          endTime
+        }
+        saturday {
+          startTime
+          endTime
+        }
+        sunday {
+          startTime
+          endTime
+        }
+      }
       categories {
         items {
           id
@@ -2005,9 +2185,18 @@ export const createOrder = /* GraphQL */ `
         id
         name
         price
+        image {
+          bucket
+          region
+          key
+          identityPoolId
+        }
         quantity
         notes
-        served
+        category {
+          id
+          name
+        }
         modifierGroups {
           id
           name
@@ -2045,9 +2234,18 @@ export const updateOrder = /* GraphQL */ `
         id
         name
         price
+        image {
+          bucket
+          region
+          key
+          identityPoolId
+        }
         quantity
         notes
-        served
+        category {
+          id
+          name
+        }
         modifierGroups {
           id
           name
@@ -2085,9 +2283,18 @@ export const deleteOrder = /* GraphQL */ `
         id
         name
         price
+        image {
+          bucket
+          region
+          key
+          identityPoolId
+        }
         quantity
         notes
-        served
+        category {
+          id
+          name
+        }
         modifierGroups {
           id
           name

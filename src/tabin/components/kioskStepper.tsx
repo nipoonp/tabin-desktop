@@ -6,10 +6,11 @@ export const KioskStepper = (props: IProps) => {
 
   if (props.buttonStyle) {
     propDuplicate.buttonStyle = {
+      // cursor: "none",
       ...props.buttonStyle,
     };
   } else {
-    propDuplicate.buttonStyle = {};
+    // propDuplicate.buttonStyle = { cursor: "none" };
   }
 
   return <Stepper {...propDuplicate} />;

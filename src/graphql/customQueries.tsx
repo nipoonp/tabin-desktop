@@ -275,10 +275,6 @@ export const GET_RESTAURANT = gql`
         formattedAddress
       }
       operatingHours {
-        sunday {
-          openingTime
-          closingTime
-        }
         monday {
           openingTime
           closingTime
@@ -300,6 +296,10 @@ export const GET_RESTAURANT = gql`
           closingTime
         }
         saturday {
+          openingTime
+          closingTime
+        }
+        sunday {
           openingTime
           closingTime
         }
@@ -356,7 +356,43 @@ export const GET_RESTAURANT = gql`
         items {
           id
           name
+          image {
+            key
+            bucket
+            region
+            identityPoolId
+          }
           displaySequence
+          availability {
+            monday {
+              startTime
+              endTime
+            }
+            tuesday {
+              startTime
+              endTime
+            }
+            wednesday {
+              startTime
+              endTime
+            }
+            thursday {
+              startTime
+              endTime
+            }
+            friday {
+              startTime
+              endTime
+            }
+            saturday {
+              startTime
+              endTime
+            }
+            sunday {
+              startTime
+              endTime
+            }
+          }
           products(limit: 200) {
             items {
               id
@@ -373,6 +409,36 @@ export const GET_RESTAURANT = gql`
                   bucket
                   region
                   identityPoolId
+                }
+                availability {
+                  monday {
+                    startTime
+                    endTime
+                  }
+                  tuesday {
+                    startTime
+                    endTime
+                  }
+                  wednesday {
+                    startTime
+                    endTime
+                  }
+                  thursday {
+                    startTime
+                    endTime
+                  }
+                  friday {
+                    startTime
+                    endTime
+                  }
+                  saturday {
+                    startTime
+                    endTime
+                  }
+                  sunday {
+                    startTime
+                    endTime
+                  }
                 }
                 modifierGroups(limit: 100) {
                   items {
@@ -470,7 +536,6 @@ export interface IGET_RESTAURANT_REGISTER_PRINTER_IGNORE_PRODUCT {
   }
 }
 
-
 export interface IGET_RESTAURANT_OPERATING_HOURS {
   sunday: {
     openingTime: string;
@@ -500,6 +565,23 @@ export interface IGET_RESTAURANT_OPERATING_HOURS {
     openingTime: string;
     closingTime: string;
   }[];
+}
+
+
+export interface IGET_RESTAURANT_ITEM_AVAILABILITY_HOURS {
+  monday: IGET_RESTAURANT_ITEM_AVAILABILITY_TIMES[];
+  tuesday: IGET_RESTAURANT_ITEM_AVAILABILITY_TIMES[];
+  wednesday: IGET_RESTAURANT_ITEM_AVAILABILITY_TIMES[];
+  thursday: IGET_RESTAURANT_ITEM_AVAILABILITY_TIMES[];
+  friday: IGET_RESTAURANT_ITEM_AVAILABILITY_TIMES[];
+  saturday: IGET_RESTAURANT_ITEM_AVAILABILITY_TIMES[];
+  sunday: IGET_RESTAURANT_ITEM_AVAILABILITY_TIMES[];
+  [key: string]: IGET_RESTAURANT_ITEM_AVAILABILITY_TIMES[]; //this is used to map over the operating hours object, https://www.logicbig.com/tutorials/misc/typescript/indexable-types.html
+}
+
+export interface IGET_RESTAURANT_ITEM_AVAILABILITY_TIMES {
+  startTime: string;
+  endTime: string;
 }
 
 export interface IGET_DASHBOARD_REGISTER {
@@ -539,6 +621,8 @@ export interface IGET_RESTAURANT_CATEGORY {
   id: string;
   name: string;
   displaySequence: number;
+  image?: IS3Image;
+  availability: IGET_RESTAURANT_ITEM_AVAILABILITY_HOURS;
   products: {
     items: IGET_RESTAURANT_PRODUCT_LINK[];
   };
@@ -558,6 +642,7 @@ export interface IGET_RESTAURANT_PRODUCT {
   soldOut: boolean;
   soldOutDate: string;
   image?: IS3Image;
+  availability: IGET_RESTAURANT_ITEM_AVAILABILITY_HOURS;
   modifierGroups: {
     items: IGET_RESTAURANT_MODIFIER_GROUP_LINK[];
   };
@@ -624,10 +709,6 @@ export const GET_DASHBOARD_RESTAURANT = gql`
       description
       restaurantManagerId
       operatingHours {
-        sunday {
-          openingTime
-          closingTime
-        }
         monday {
           openingTime
           closingTime
@@ -649,6 +730,10 @@ export const GET_DASHBOARD_RESTAURANT = gql`
           closingTime
         }
         saturday {
+          openingTime
+          closingTime
+        }
+        sunday {
           openingTime
           closingTime
         }
@@ -700,6 +785,36 @@ export const GET_DASHBOARD_RESTAURANT = gql`
           id
           name
           displaySequence
+          availability {
+            monday {
+              startTime
+              endTime
+            }
+            tuesday {
+              startTime
+              endTime
+            }
+            wednesday {
+              startTime
+              endTime
+            }
+            thursday {
+              startTime
+              endTime
+            }
+            friday {
+              startTime
+              endTime
+            }
+            saturday {
+              startTime
+              endTime
+            }
+            sunday {
+              startTime
+              endTime
+            }
+          }
           products(limit: 500) {
             items {
               id
@@ -745,6 +860,36 @@ export const GET_DASHBOARD_RESTAURANT = gql`
           name
           description
           price
+          availability {
+            monday {
+              startTime
+              endTime
+            }
+            tuesday {
+              startTime
+              endTime
+            }
+            wednesday {
+              startTime
+              endTime
+            }
+            thursday {
+              startTime
+              endTime
+            }
+            friday {
+              startTime
+              endTime
+            }
+            saturday {
+              startTime
+              endTime
+            }
+            sunday {
+              startTime
+              endTime
+            }
+          }
           categories(limit: 500) {
             items {
               id
@@ -875,10 +1020,27 @@ export interface IGET_DASHBOARD_OPERATING_TIMES {
   closingTime: string;
 }
 
+export interface IGET_DASHBOARD_ITEM_AVAILABILITY_HOURS {
+  monday: IGET_DASHBOARD_ITEM_AVAILABILITY_TIMES[];
+  tuesday: IGET_DASHBOARD_ITEM_AVAILABILITY_TIMES[];
+  wednesday: IGET_DASHBOARD_ITEM_AVAILABILITY_TIMES[];
+  thursday: IGET_DASHBOARD_ITEM_AVAILABILITY_TIMES[];
+  friday: IGET_DASHBOARD_ITEM_AVAILABILITY_TIMES[];
+  saturday: IGET_DASHBOARD_ITEM_AVAILABILITY_TIMES[];
+  sunday: IGET_DASHBOARD_ITEM_AVAILABILITY_TIMES[];
+  [key: string]: IGET_DASHBOARD_ITEM_AVAILABILITY_TIMES[]; //this is used to map over the operating hours object, https://www.logicbig.com/tutorials/misc/typescript/indexable-types.html
+}
+
+export interface IGET_DASHBOARD_ITEM_AVAILABILITY_TIMES {
+  startTime: string;
+  endTime: string;
+}
+
 export interface IGET_DASHBOARD_CATEGORY {
   id: string;
   name: string;
   displaySequence: number;
+  availability: IGET_DASHBOARD_ITEM_AVAILABILITY_HOURS;
   products: { items: IGET_DASHBOARD_PRODUCTS[] };
 }
 
@@ -895,6 +1057,7 @@ export interface IGET_DASHBOARD_PRODUCT {
   description: string;
   price: number;
   image?: IS3Image;
+  availability: IGET_DASHBOARD_ITEM_AVAILABILITY_HOURS;
   categories: { items: IGET_DASHBOARD_PRODUCTS[] };
   modifierGroups: {
     items: IGET_DASHBOARD_MODIFIER_GROUPS[];

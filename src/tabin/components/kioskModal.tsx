@@ -15,6 +15,7 @@ export const KioskModal = (
             overflow: "scroll",
             // all properties must be defined (to overwrite defaults)
             position: "fixed",
+            // cursor: "none",
           },
           content: {
             marginBottom: "none",

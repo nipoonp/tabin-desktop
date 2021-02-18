@@ -39,5 +39,6 @@ export const useSmallScreen = () => {
 export const useBigScreen = () => {
   const { width } = useWindowSize();
   const isBigScreen = width && width >= 1128;
+
   return { isBigScreen };
 };

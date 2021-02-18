@@ -6,6 +6,7 @@ export const KioskRadio = (props: IProps) => {
 
   if (props.style) {
     propDuplicate.style = {
+      // cursor: "none",
       ...props.style,
     };
 
@@ -15,7 +16,7 @@ export const KioskRadio = (props: IProps) => {
       ...props.radioStyle,
     };
   } else {
-    propDuplicate.style = {};
+    // propDuplicate.style = { cursor: "none" };
     propDuplicate.radioStyle = { height: "28px", width: "28px" };
   }
 

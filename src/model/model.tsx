@@ -1,4 +1,4 @@
-import { IGET_RESTAURANT } from "../graphql/customQueries";
+import { IS3Image } from "../graphql/customQueries";
 
 export interface ICognitoUser {
   attributes: {
@@ -85,9 +85,17 @@ export interface ICartProduct {
   id: string;
   name: string;
   price: number;
+  image: IS3Image | null;
   quantity: number;
   notes: string | null;
+  category: ICartCategory;
   modifierGroups: ICartModifierGroup[];
+}
+
+export interface ICartCategory {
+  id: string;
+  name: string;
+  image: IS3Image | null;
 }
 
 export interface ICartModifierGroup {
@@ -124,44 +132,6 @@ export interface IOrderReceipt {
   number: string;
   table: string | null;
 }
-
-// // delete this
-// export interface IOrderedProduct {
-//   id: string;
-//   name: string;
-//   price: number;
-//   notes: string | null;
-//   quantity: number;
-//   modifiers?: IOrderedModifiers;
-//   category: {
-//     id: string;
-//     name: string;
-//     restaurant: {
-//       id: string;
-//       name: string;
-//     };
-//   };
-// }
-
-// export interface IOrderedModifiers {
-//   [groupID: string]: IOrderedModifier[];
-// }
-
-// export interface IOrderedModifier {
-//   id: string;
-//   name: string;
-//   price: number;
-//   quantity: number;
-//   group: {
-//     id: string;
-//     name: string;
-//   };
-// }
-
-// export interface IOrderedRestaurant {
-//   id: string;
-//   name: string;
-// }
 
 export interface IModifierGroup {
   id: string;
@@ -245,13 +215,6 @@ export interface IProductCategory {
   products: {
     items: IProduct[];
   };
-}
-
-export interface IS3Image {
-  key: string;
-  bucket: string;
-  region: string;
-  identityPoolId: string;
 }
 
 export interface IRestaurant {

@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import { Logger } from "aws-amplify";
 import gql from "graphql-tag";
 import { useMutation } from "react-apollo-hooks";
-import { IOperatingHours, IS3Image } from "../model/model";
+import { IOperatingHours } from "../model/model";
 import { useUser } from "./user-context";
 import { useAuth } from "./auth-context";
+import { IS3Image } from "../graphql/customQueries";
 
 const logger = new Logger("CreateRestaurantContext");
 

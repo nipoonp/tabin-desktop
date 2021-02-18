@@ -262,7 +262,7 @@ export const Login = () => {
 
   return (
     <>
-      {!isMobile && <HomeNav darkTheme={false} />}
+      <HomeNav />
       <div
         style={{
           minHeight: "100vh",

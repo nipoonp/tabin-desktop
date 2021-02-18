@@ -6,10 +6,10 @@ import aws_exports from "../../aws-exports.js";
 import { H5, H6 } from "./headings";
 import { toast } from "./toast";
 import { simpleDateTimeFormatUTC } from "../../util/dateFormat";
-import { IS3Image } from "../../model/model";
 import { FullScreenSpinner } from "./fullScreenSpinner";
 import { useUser } from "../../context/user-context";
 import { Space2 } from "./spaces";
+import { IS3Image } from "../../graphql/customQueries.jsx";
 
 const logger = new Logger("ImagePicker");
 

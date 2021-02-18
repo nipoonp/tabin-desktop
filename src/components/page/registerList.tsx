@@ -15,7 +15,7 @@ import { Title2Font, Title3Font } from "../../tabin/components/fonts";
 export const RegisterList = () => {
   const history = useHistory();
   const { user } = useUser();
-  const { register,connectRegister, disconnectRegister } = useRegister();
+  const { register, connectRegister, disconnectRegister } = useRegister();
 
   if (!user) {
     throw "User must log in!";
@@ -42,10 +42,10 @@ export const RegisterList = () => {
       toast.error(e);
     }
   };
-  
+
   return (
     <>
-      {!isMobile && <HomeNav darkTheme={false} />}
+      <HomeNav />
       <div
         style={{
           display: "flex",
@@ -55,32 +55,32 @@ export const RegisterList = () => {
         }}
       >
         <div style={{ width: "500px" }}>
-        <Title2Font>Select a register to use</Title2Font>
-        <Space6/>
-        {user.restaurants.items[0].registers.items.map((reg, index) => (
-          <>
-             {index != 0 && <Separator4 />}
-            <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
-              <div>{reg.name}</div>
-              {register && (register.id == reg.id) ? (
-                <>
-                  <ButtonV2 onClick={() =>{
+          <Title2Font>Select a register to use</Title2Font>
+          <Space6 />
+          {user.restaurants.items[0].registers.items.map((reg, index) => (
+            <>
+              {index != 0 && <Separator4 />}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div>{reg.name}</div>
+                {register && (register.id == reg.id) ? (
+                  <>
+                    <ButtonV2 onClick={() => {
                       onDisconnect(reg.id)
                     }}>{"Disconnect"}
-                  </ButtonV2>
-                </>
-              ): (
-                <>
-                  <ButtonV2 disabled={reg.active} onClick={() =>{
-                    onConnect(reg.id)
-                  }}>{reg.active ? "Unavailable" : "Use"}
-                  </ButtonV2>
+                    </ButtonV2>
+                  </>
+                ) : (
+                    <>
+                      <ButtonV2 disabled={reg.active} onClick={() => {
+                        onConnect(reg.id)
+                      }}>{reg.active ? "Unavailable" : "Use"}
+                      </ButtonV2>
 
-                </>
-              )}
-            </div>
-          </>
-        ))}
+                    </>
+                  )}
+              </div>
+            </>
+          ))}
         </div>
       </div>
     </>

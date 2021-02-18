@@ -17,7 +17,7 @@ export const ConfigureNewEftpos = () => {
 
   return (
     <>
-      {!isMobile && <HomeNav darkTheme={false} />}
+      <HomeNav />
 
       <div
         style={{
