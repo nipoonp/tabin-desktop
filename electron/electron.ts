@@ -21,7 +21,7 @@ let mainWindow: any;
 function createWindow() {
   // mainWindow = new BrowserWindow({width: 900, height: 680, fullscreen: true});
   mainWindow = new BrowserWindow({
-    width: 1024, height: 900, fullscreen: true, webPreferences: {
+    width: 1024, height: 900, fullscreen: true, frame: false, webPreferences: {
       nodeIntegration: true,
       preload: path.join(__dirname, "preload.js")
     }
@@ -29,7 +29,11 @@ function createWindow() {
   // mainWindow.loadURL(`file://${path.join(__dirname, '../build/index.html')}`);
   mainWindow.loadFile(path.join(__dirname, "index.html"));
   mainWindow.on('closed', () => { mainWindow = null });
-  mainWindow.webContents.openDevTools()
+
+  // Hide the menu bar
+  mainWindow.setMenu(null);
+
+  // mainWindow.webContents.openDevTools()
 }
 
 app.on('ready', createWindow);

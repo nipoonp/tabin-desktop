@@ -1,7 +1,7 @@
 import React from "react";
 import ReactModal, { Props } from "react-modal";
 
-export const KioskModal = (
+export const KioskModal2 = (
   props: Props & {
     children: React.ReactNode;
   }
@@ -15,17 +15,18 @@ export const KioskModal = (
             overflow: "scroll",
             // all properties must be defined (to overwrite defaults)
             position: "fixed",
+            backgroundColor: "rgba(38, 38, 38, 0.8)"
           },
           content: {
             marginBottom: "none",
             // all properties must be defined (to overwrite defaults)
             position: "absolute",
-            top: "0",
-            right: "0",
-            bottom: "0",
-            left: "0",
+            top: "256px",
+            right: "128px",
+            bottom: "256px",
+            left: "128px",
             border: "none",
-            borderRadius: "0",
+            borderRadius: "20px",
             backgroundColor: "#FFFFFF",
             overflow: "auto",
             padding: "0",

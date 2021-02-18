@@ -6,7 +6,6 @@ export const KioskCheckbox = (props: IProps) => {
 
   if (props.style) {
     propDuplicate.style = {
-      cursor: "none",
       ...props.style,
     };
 
@@ -16,7 +15,7 @@ export const KioskCheckbox = (props: IProps) => {
       ...props.boxStyle,
     };
   } else {
-    propDuplicate.style = { cursor: "none" };
+    propDuplicate.style = {};
     propDuplicate.boxStyle = { height: "28px", width: "28px" };
   }
 

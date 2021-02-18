@@ -34,7 +34,6 @@ import {
   IGET_RESTAURANT_MODIFIER_GROUP,
   IGET_RESTAURANT_MODIFIER,
 } from "../../graphql/customQueries";
-import { KeyboardTextArea } from "../../tabin/components/keyboardTextArea";
 import { KioskModal } from "../../tabin/components/kioskModal";
 import { KioskButton } from "../../tabin/components/kioskButton";
 import { SizedBox } from "../../tabin/components/sizedBox";
@@ -42,6 +41,7 @@ import { KioskStepper } from "../../tabin/components/kioskStepper";
 import { KioskCheckbox } from "../../tabin/components/kioskCheckbox";
 import { KioskRadio } from "../../tabin/components/kioskRadio";
 import { Separator6 } from "../../tabin/components/separator";
+import { InputV2 } from "../../tabin/components/inputv2";
 
 const logger = new Logger("productModal");
 const styles = require("./product.module.css");
@@ -410,8 +410,8 @@ export const ProductModal = (props: {
     setQuantity(count);
   };
 
-  const onNotesChange = (value: string) => {
-    setNotes(value);
+  const onNotesChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNotes(event.target.value);
   };
 
   const modifierGroups = (
@@ -480,10 +480,10 @@ export const ProductModal = (props: {
     <>
       <Title2Font>Special instructions</Title2Font>
       <Space3 />
-      <KeyboardTextArea
+      <InputV2
         placeholder={"Leave a note for the kitchen"}
-        onChangeKeyboard={onNotesChange}
-        value={notes}
+        onChange={onNotesChange}
+        value={notes || ""}
       />
     </>
   );
@@ -664,8 +664,8 @@ export const ModifierGroup = (props: {
     return props.modifierGroup.choiceMin === props.modifierGroup.choiceMax
       ? "Select " + props.modifierGroup.choiceMin
       : props.modifierGroup.choiceMin === 0
-      ? "Select up to " + props.modifierGroup.choiceMax
-      : "Make between " +
+        ? "Select up to " + props.modifierGroup.choiceMax
+        : "Make between " +
         props.modifierGroup.choiceMin +
         " and " +
         props.modifierGroup.choiceMax +
@@ -913,14 +913,14 @@ const Modifier = (props: {
               )}
             </>
           ) : (
-            <>
-              <NormalFont>
-                {props.modifier.name}{" "}
-                {props.modifier.price > 0 &&
-                  `($${convertCentsToDollars(props.modifier.price)})`}
-              </NormalFont>
-            </>
-          )}
+              <>
+                <NormalFont>
+                  {props.modifier.name}{" "}
+                  {props.modifier.price > 0 &&
+                    `($${convertCentsToDollars(props.modifier.price)})`}
+                </NormalFont>
+              </>
+            )}
         </div>
         <Space3 />
       </div>

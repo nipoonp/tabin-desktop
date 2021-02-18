@@ -50,7 +50,6 @@ export const KioskPageWrapper = (props: IProps) => {
     <>
       {/* <h1>{`x: ${x}; y: ${y};`}</h1> */}
       <div
-        style={{ cursor: "none" }}
         onClick={() => {
           resetUserInactiveSecondsCounter();
         }}

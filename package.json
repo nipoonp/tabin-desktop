@@ -2,7 +2,7 @@
   "name": "Tabin",
   "description": "Tabin Self Service Kiosk",
   "author": "Tabin",
-  "version": "0.1.0",
+  "version": "1.0.6",
   "private": true,
   "resolutions": {
     "apollo-client": "2.6.3"
@@ -70,7 +70,8 @@
     "start:desktop": "npm run build:desktop && electron ./build/electron.js",
     "build:desktop": "tsc -p electron/tsconfig.json",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "release": "electron-builder -mwl -p 'onTagOrDraft'"
   },
   "eslintConfig": {
     "extends": "react-app"

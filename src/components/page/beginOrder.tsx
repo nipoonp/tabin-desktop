@@ -16,6 +16,8 @@ import { S3Image } from "aws-amplify-react";
 import { CarouselProvider, Slider, Slide } from "pure-react-carousel";
 import "pure-react-carousel/dist/react-carousel.es.css";
 
+const styles = require("./beginOrder.module.css");
+
 export const BeginOrder = (props: {}) => {
   const { user } = useUser();
 
@@ -34,10 +36,10 @@ export const BeginOrder = (props: {}) => {
           <BeginOrderAdvertisements />
         </>
       ) : (
-        <>
-          <BeginOrderDefault />
-        </>
-      )}
+          <>
+            <BeginOrderDefault />
+          </>
+        )}
     </>
   );
 };
@@ -62,6 +64,7 @@ const BeginOrderAdvertisements = () => {
           height: "100%",
           width: "100%",
           backgroundColor: "#F2F2F2",
+          overflow: "hidden"
         }}
         onClick={() => {
           const userRestaurantId = user.restaurants.items[0].id;
@@ -124,10 +127,11 @@ const BeginOrderAdvertisements = () => {
           naturalSlideWidth={500}
           naturalSlideHeight={1000}
           totalSlides={user.restaurants.items[0].advertisements.items.length}
+          interval={6000}
           isPlaying={true}
           isIntrinsicHeight={true}
         >
-          <Slider>
+          <Slider classNameAnimation={styles.slideAnimation}>
             {user.restaurants.items[0].advertisements.items.map(
               (advertisement, index) => (
                 <Slide index={index}>
