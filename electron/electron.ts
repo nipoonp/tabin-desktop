@@ -2,7 +2,8 @@ import electron from 'electron';
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 import { ipcMain } from 'electron';
-
+//@ts-ignore
+import updater = require("./updater");
 import path from 'path';
 // import isDev from 'electron-is-dev';
 
@@ -19,6 +20,11 @@ let verifoneClient = new net.Socket();
 let mainWindow: any;
 
 function createWindow() {
+
+  // Check for app updates 3 seconds after launch
+  // const updater = new Updater();
+  setTimeout(updater, 3000);
+
   // mainWindow = new BrowserWindow({width: 900, height: 680, fullscreen: true});
   mainWindow = new BrowserWindow({
     width: 1024, height: 900, fullscreen: true, frame: false, webPreferences: {

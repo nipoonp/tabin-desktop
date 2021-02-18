@@ -1,11 +1,11 @@
 {
   "name": "Tabin",
-  "version": "0.1.0",
-  "description": "Tabin Desktop App",
+  "description": "Tabin Self Service Kiosk",
+  "author": "Tabin",
+  "version": "0.0.9",
+  "repository": "https://github.com/nipoonp/tabin-desktop",
+  "homepage": "https://github.com/nipoonp/tabin-desktop",
   "main": "public/electron.ts",
-  "repository": "https://github.com/zeal-ltd/tabin-web",
-  "homepage": "https://github.com/zeal-ltd/tabin-web",
-  "author": "Tabin Dev Team",
   "private": true,
   "resolutions": {
     "apollo-client": "2.6.3"
@@ -37,6 +37,8 @@
     "aws-appsync": "^1.8.1",
     "date-fns": "^2.15.0",
     "electron-is-dev": "^1.2.0",
+    "electron-log": "^4.3.1",
+    "electron-updater": "^4.3.5",
     "font-awesome": "^4.7.0",
     "graphql-tag": "^2.10.1",
     "lodash.debounce": "^4.0.8",
@@ -62,11 +64,11 @@
     "react-simple-keyboard": "^2.3.103",
     "react-toastify": "^6.0.8",
     "save": "^2.4.0",
+    "socket.io": "^2.3.0",
     "socket.io-client": "^2.3.0",
     "start": "^5.1.0",
     "typescript": "^3.9.7",
-    "yup": "^0.29.1",
-    "socket.io": "^2.3.0"
+    "yup": "^0.29.1"
   },
   "scripts": {
     "start:web": "react-scripts start",
@@ -76,7 +78,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "release-all": "electron-builder -mwl -p 'onTagOrDraft'",
-    "release": "electron-builder -w",
+    "release": "electron-builder -mwl -p 'onTagOrDraft'",
     "electron-dev": "concurrently \"BROWSER=none npm run start\" \"wait-on http://localhost:3000 && electron .\""
   },
   "eslintConfig": {
@@ -91,12 +93,14 @@
   "build": {
     "appId": "com.tabin.desktop",
     "copyright": "Copyright 2020 Zeal Private Ltd",
+    "publish": {
+      "provider": "github"
+    },
     "mac": {
       "category": "public.app-category.business",
-      "target": "dmg",
       "icon": "build/icon.icns"
-    }, 
-    "win":{
+    },
+    "win": {
       "target": "zip",
       "icon": "build/icon.ico",
       "certificateFile": "private/electron-tabin-desktop-development.p12",
