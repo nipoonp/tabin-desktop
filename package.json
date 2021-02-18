@@ -1,8 +1,11 @@
 {
   "name": "Tabin",
-  "description": "Tabin Self Service Kiosk",
-  "author": "Tabin",
-  "version": "1.0.6",
+  "version": "0.1.0",
+  "description": "Tabin Desktop App",
+  "main": "public/electron.ts",
+  "repository": "https://github.com/zeal-ltd/tabin-web",
+  "homepage": "https://github.com/zeal-ltd/tabin-web",
+  "author": "Tabin Dev Team",
   "private": true,
   "resolutions": {
     "apollo-client": "2.6.3"
@@ -62,7 +65,8 @@
     "socket.io-client": "^2.3.0",
     "start": "^5.1.0",
     "typescript": "^3.9.7",
-    "yup": "^0.29.1"
+    "yup": "^0.29.1",
+    "socket.io": "^2.3.0"
   },
   "scripts": {
     "start:web": "react-scripts start",
@@ -71,14 +75,17 @@
     "build:desktop": "tsc -p electron/tsconfig.json",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "release": "electron-builder -mwl -p 'onTagOrDraft'"
+    "release": "electron-builder -mwl -p 'onTagOrDraft'",
+    "electron-dev": "concurrently \"BROWSER=none npm run start\" \"wait-on http://localhost:3000 && electron .\""
   },
   "eslintConfig": {
     "extends": "react-app"
   },
   "devDependencies": {
     "electron": "^10.1.5",
-    "electron-builder": "^22.9.1"
+    "concurrently": "^5.3.0",
+    "electron-builder": "^22.9.1",
+    "wait-on": "^5.2.0"
   },
   "build": {
     "appId": "com.tabin.desktop",
